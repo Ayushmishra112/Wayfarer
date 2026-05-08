@@ -36,19 +36,13 @@ RUN npm run build
 # Stage 2: Production stage
 FROM nginx:stable-alpine
 
-# Copy the build output from the previous stage
+# Copy the build output from the build stage
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# Add custom nginx config to handle SPA routing (redirect all to index.html)
-RUN echo "server { \
-    listen 80; \
-    location / { \
-        root /usr/share/nginx/html; \
-        index index.html index.htm; \
-        try_files \$uri \$uri/ /index.html; \
-    } \
-}" > /etc/nginx/conf.d/default.conf
+# Remove the default nginx config — we write it dynamically at startup
+# so Nginx listens on the $PORT that Cloud Run injects at runtime (default 8080)
+RUN rm /etc/nginx/conf.d/default.conf
 
-EXPOSE 80
+EXPOSE 8080
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["sh", "-c", "echo 'server { listen '${PORT:-8080}'; location / { root /usr/share/nginx/html; index index.html index.htm; try_files $uri $uri/ /index.html; } }' > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"]
