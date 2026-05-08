@@ -1,0 +1,25 @@
+
+C:\Users\91909\Desktop\Travel Planning & experience Engine\src\App.jsx
+  9:8  error  'styles' is defined but never used  no-unused-vars
+
+C:\Users\91909\Desktop\Travel Planning & experience Engine\src\components\EmptyState\EmptyState.jsx
+  5:20  error  'MapPin' is defined but never used  no-unused-vars
+  5:28  error  'Zap' is defined but never used     no-unused-vars
+
+C:\Users\91909\Desktop\Travel Planning & experience Engine\src\components\ItineraryPanel\ItineraryPanel.jsx
+   8:30  error  'Users' is defined but never used            no-unused-vars
+  11:24  error  'ACTIONS' is defined but never used          no-unused-vars
+  35:11  error  'replan' is assigned a value but never used  no-unused-vars
+
+C:\Users\91909\Desktop\Travel Planning & experience Engine\src\hooks\useItineraryGenerator.js
+  144:42  error  'simulatedEvent' is defined but never used  no-unused-vars
+
+C:\Users\91909\Desktop\Travel Planning & experience Engine\src\services\geminiService.js
+   75:5  error  There is no `cause` attached to the symptom error being thrown  preserve-caught-error
+  109:5  error  There is no `cause` attached to the symptom error being thrown  preserve-caught-error
+
+C:\Users\91909\Desktop\Travel Planning & experience Engine\src\store\tripStore.jsx
+   39:14  error  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+  128:17  error  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+✖ 11 problems (11 errors, 0 warnings)

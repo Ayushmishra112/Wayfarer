@@ -1,0 +1,138 @@
+/* src/components/GeneratingState/GeneratingState.module.css */
+
+.container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  background: var(--color-bg);
+}
+
+.bgPulse {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.03) 0%, transparent 70%);
+  animation: bgPulse 3s ease-in-out infinite;
+}
+
+@keyframes bgPulse {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.02); }
+}
+
+.content {
+  text-align: center;
+  max-width: 460px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Minimal Loader */
+.orbitContainer {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto var(--space-xl);
+}
+
+.orbitCenter {
+  position: absolute;
+  inset: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  box-shadow: var(--shadow-sm);
+  z-index: 2;
+}
+
+.orbitRing1 {
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--color-border-bright);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: orbit 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.orbitRing2 {
+  position: absolute;
+  inset: 12px;
+  border: 1px solid var(--color-border);
+  border-bottom-color: var(--color-text-muted);
+  border-radius: 50%;
+  animation: orbit 2s cubic-bezier(0.4, 0, 0.2, 1) infinite reverse;
+}
+
+@keyframes orbit {
+  to { transform: rotate(360deg); }
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-sm);
+  font-family: var(--font-display);
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-2xl);
+  line-height: 1.5;
+}
+
+/* Steps */
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  text-align: left;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 20px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+}
+
+.stepIcon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.stepLabel {
+  flex: 1;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.stepCheck {
+  font-size: 0.8rem;
+  color: var(--color-success);
+  font-weight: 500;
+  background: var(--color-bg-secondary);
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid var(--color-success);
+}
