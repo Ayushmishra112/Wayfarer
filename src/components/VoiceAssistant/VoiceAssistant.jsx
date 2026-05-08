@@ -161,7 +161,7 @@ export default function VoiceAssistant() {
         recognitionRef.current.start();
         setIsListening(true);
         toast('Listening... Speak now!');
-      } catch (e) {
+      } catch (_e) {
         // Error already toasted in startAudioMonitoring
         setIsListening(false);
       }

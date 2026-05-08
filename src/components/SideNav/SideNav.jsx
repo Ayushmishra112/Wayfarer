@@ -1,4 +1,3 @@
-import React from 'react';
 import { Cloud, Sparkles, Sun, Users, TrendingUp, Settings } from 'lucide-react';
 import toast from 'react-hot-toast';
 

@@ -1,10 +1,9 @@
 // src/components/IntelligenceShiftModal/IntelligenceShiftModal.jsx
-import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Cloud, Sun, Users, ArrowRight, CheckCircle, ArrowLeftRight } from 'lucide-react';
 import styles from './IntelligenceShiftModal.module.css';
 
-export default function IntelligenceShiftModal({ isOpen, onClose, onAccept, event, originalDay, newDay }) {
+export default function IntelligenceShiftModal({ isOpen, onClose, onAccept, event, originalDay: _originalDay, newDay: _newDay }) {
   if (!isOpen) return null;
 
   return (

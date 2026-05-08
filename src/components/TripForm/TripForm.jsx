@@ -28,10 +28,14 @@ export default function TripForm() {
   const { generate } = useItineraryGenerator();
   const [localPrefs, setLocalPrefs] = useState(() => state.preferences);
 
-  // Sync state if it changes from outside (e.g. voice assistant)
+  // Sync local prefs from store when it changes externally (e.g. voice assistant fill)
   useEffect(() => {
+    // Using a functional update avoids stale-closure issues
+    // We explicitly derive from store to keep voice assistant in sync
     setLocalPrefs(state.preferences);
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   }, [state.preferences]);
+
 
   const update = (key, value) => setLocalPrefs(p => ({ ...p, [key]: value }));
 

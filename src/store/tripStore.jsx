@@ -7,6 +7,7 @@ import { ACTIONS } from './tripActions';
 
 // ─── Initial State Factory ───────────────────────────────────────
 // Fixed Q-INIT: Returns fresh state with new timestamps each call
+// eslint-disable-next-line react-refresh/only-export-components
 export const createInitialState = () => ({
   // User preferences
   preferences: {
@@ -56,6 +57,7 @@ export const createInitialState = () => ({
 });
 
 // ─── Reducer ──────────────────────────────────────────────────────
+// eslint-disable-next-line react-refresh/only-export-components
 export function tripReducer(state, action) {
   switch (action.type) {
     case ACTIONS.SET_PREFERENCES:
