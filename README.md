@@ -1,4 +1,4 @@
-# TripPulse AI 🌍⚡
+# Wayfarer AI 🌍⚡
 
 > **An adaptive AI travel engine that replans your trip in real time based on weather, crowd density, budget, delays, and personal vibe.**
 
@@ -10,7 +10,7 @@
 
 ## What It Does
 
-TripPulse AI goes beyond static itinerary planners. It's an **adaptive intelligence engine** that:
+Wayfarer AI goes beyond static itinerary planners. It's an **adaptive intelligence engine** that:
 
 1. 🧠 **Generates** a hyper-personalized itinerary using Gemini AI
 2. 🌧️ **Detects** live weather and crowd conditions
@@ -54,8 +54,8 @@ TripPulse AI goes beyond static itinerary planners. It's an **adaptive intellige
 ### 1. Clone and Install
 
 ```bash
-git clone <repo>
-cd trippulse-ai
+git clone https://github.com/Ayushmishra112/Wayfarer.git
+cd Wayfarer
 npm install
 ```
 
