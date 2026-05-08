@@ -1,15 +1,13 @@
-// src/store/tripStore.js
+// src/store/tripStore.jsx
 // Centralized application state using React Context + useReducer
 // This pattern avoids prop drilling while keeping the codebase simple
 
 import { createContext, useContext, useReducer, useCallback } from 'react';
 import { ACTIONS } from './tripActions';
 
-// Re-export ACTIONS so consumers can import it from tripStore (backward compat)
-export { ACTIONS };
-
-// ─── Initial State ───────────────────────────────────────────────
-const initialState = {
+// ─── Initial State Factory ───────────────────────────────────────
+// Fixed Q-INIT: Returns fresh state with new timestamps each call
+export const createInitialState = () => ({
   // User preferences
   preferences: {
     destination: '',
@@ -52,12 +50,13 @@ const initialState = {
 
   // Replan history for explainability
   replanHistory: [],
-};
 
-
+  // Proposed Replan (for Intelligence Shift Modal)
+  proposedReplan: null,
+});
 
 // ─── Reducer ──────────────────────────────────────────────────────
-function tripReducer(state, action) {
+export function tripReducer(state, action) {
   switch (action.type) {
     case ACTIONS.SET_PREFERENCES:
       return { ...state, preferences: { ...state.preferences, ...action.payload } };
@@ -83,7 +82,13 @@ function tripReducer(state, action) {
       return { ...state, alerts: state.alerts.filter(a => a.id !== action.payload) };
 
     case ACTIONS.START_REPLANNING:
-      return { ...state, isReplanning: true };
+      return { ...state, isReplanning: true, proposedReplan: null };
+
+    case ACTIONS.PROPOSE_REPLAN:
+      return { ...state, isReplanning: false, proposedReplan: action.payload };
+
+    case ACTIONS.DISCARD_REPLAN:
+      return { ...state, proposedReplan: null };
 
     case ACTIONS.APPLY_REPLAN:
       if (!state.itinerary) return state;
@@ -101,13 +106,14 @@ function tripReducer(state, action) {
         replanHistory: action.payload.event
           ? [action.payload.event, ...state.replanHistory]
           : state.replanHistory,
+        proposedReplan: null,
       };
 
     case ACTIONS.SET_ERROR:
       return { ...state, error: action.payload, isGenerating: false, isReplanning: false };
 
     case ACTIONS.RESET:
-      return { ...initialState };
+      return createInitialState(); // Reset to fresh state
 
     case ACTIONS.CLEAR_ALERTS:
       return { ...state, alerts: [] };
@@ -121,12 +127,13 @@ function tripReducer(state, action) {
 const TripContext = createContext(null);
 
 export function TripProvider({ children }) {
-  const [state, dispatch] = useReducer(tripReducer, initialState);
+  // Fixed Q-INIT: Use lazy initializer
+  const [state, dispatch] = useReducer(tripReducer, null, createInitialState);
 
   const addAlert = useCallback((alert) => {
     dispatch({
       type: ACTIONS.ADD_ALERT,
-      payload: { ...alert, id: `alert_${Date.now()}`, timestamp: new Date() },
+      payload: { ...alert, id: `alert_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`, timestamp: new Date() },
     });
   }, []);
 
@@ -137,6 +144,7 @@ export function TripProvider({ children }) {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useTripStore() {
   const ctx = useContext(TripContext);
   if (!ctx) throw new Error('useTripStore must be used within TripProvider');

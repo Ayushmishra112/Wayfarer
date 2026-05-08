@@ -13,6 +13,7 @@ import {
 import { useTripStore } from '../../store/tripStore';
 import { ACTIONS } from '../../store/tripActions';
 import { useItineraryGenerator } from '../../hooks/useItineraryGenerator';
+import { stableLevel } from '../../utils/math';
 import styles from './LivePanel.module.css';
 
 const WeatherIconMap = {
@@ -35,10 +36,10 @@ const ALERT_ICONS = {
 };
 
 const ALERT_COLORS = {
-  success: '#6B8E4E',
-  warning: '#D98A44',
-  error: '#C87A65',
-  info: '#7E8D9C',
+  success: 'var(--color-success)',
+  warning: 'var(--color-warning)',
+  error: 'var(--color-danger)',
+  info: 'var(--color-info)',
 };
 
 // Simulated live crowd data for the demo
@@ -65,7 +66,7 @@ export default function LivePanel() {
 
     return places.slice(0, 4).map((place, i) => ({
       name: place.substring(0, 20) + (place.length > 20 ? '...' : ''),
-      level: Math.floor(Math.random() * 60) + 20, // 20-80%
+      level: stableLevel(place),
       trend: i % 2 === 0 ? 'up' : 'down'
     }));
   }, [itinerary]);
@@ -88,6 +89,7 @@ export default function LivePanel() {
 
   return (
     <motion.aside
+      aria-label="Live Travel Intelligence"
       className={styles.panel}
       initial={{ x: 40, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
@@ -100,7 +102,7 @@ export default function LivePanel() {
             animate={{ scale: [1, 1.2, 1], opacity: [1, 0.7, 1] }}
             transition={{ duration: 2, repeat: Infinity }}
           >
-            <Wifi size={14} style={{ color: '#10b981' }} />
+            <Wifi size={14} style={{ color: 'var(--color-success)' }} />
           </motion.div>
           <span>Live Context</span>
         </div>
@@ -169,11 +171,11 @@ export default function LivePanel() {
             transition={{ delay: 0.2 }}
           >
             <div className={styles.replanHeader}>
-              <Zap size={14} style={{ color: '#6366f1' }} />
-              <span>AI Disruption Engine</span>
+              <Zap size={14} style={{ color: 'var(--color-info)' }} />
+              <span>Intelligence Shift</span>
             </div>
             <p className={styles.replanDesc}>
-              Simulate a real-world event and watch TripPulse replan your trip instantly.
+              A gentle realignment. Trigger a shift in conditions and watch Wayfarer gracefully adjust your schedule.
             </p>
             <div style={{ marginBottom: '8px' }}>
               <select 
@@ -231,7 +233,11 @@ export default function LivePanel() {
             )}
           </div>
 
-          <div className={styles.alertsList}>
+          <div 
+          className={styles.alertsList} 
+          aria-live="polite" 
+          aria-atomic="false"
+        >
             <AnimatePresence mode="popLayout">
               {alerts.length === 0 ? (
                 <div className={styles.emptyAlerts}>
@@ -306,10 +312,10 @@ export default function LivePanel() {
                         className={styles.crowdFill}
                         style={{
                           background: spot.level > 75
-                            ? '#C87A65'
+                            ? 'var(--color-danger)'
                             : spot.level > 50
-                            ? '#D98A44'
-                            : '#6B8E4E',
+                            ? 'var(--color-warning)'
+                            : 'var(--color-success)',
                         }}
                         initial={{ width: 0 }}
                         animate={{ width: `${spot.level}%` }}
@@ -320,14 +326,14 @@ export default function LivePanel() {
                   <div className={styles.crowdRight}>
                     <span
                       className={styles.crowdPct}
-                      style={{ color: spot.level > 75 ? '#C87A65' : spot.level > 50 ? '#D98A44' : '#6B8E4E' }}
+                      style={{ color: spot.level > 75 ? 'var(--color-danger)' : spot.level > 50 ? 'var(--color-warning)' : 'var(--color-success)' }}
                     >
                       {spot.level}%
                     </span>
                     <TrendingUp
                       size={10}
                       style={{
-                        color: spot.trend === 'up' ? '#C87A65' : spot.trend === 'down' ? '#6B8E4E' : '#D98A44',
+                        color: spot.trend === 'up' ? 'var(--color-danger)' : spot.trend === 'down' ? 'var(--color-success)' : 'var(--color-warning)',
                         transform: spot.trend === 'down' ? 'rotate(180deg)' : 'none',
                       }}
                     />
@@ -343,7 +349,7 @@ export default function LivePanel() {
           <div className={styles.section}>
             <div className={styles.sectionHeader}>
               <Globe size={13} />
-              <span>Adaptation Log</span>
+              <span>Realignment Log</span>
             </div>
             <div className={styles.historyList}>
               {replanHistory.map((event, i) => (

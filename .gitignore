@@ -11,6 +11,12 @@ dist-ssr/
 # Environment variables — NEVER commit these
 .env
 .env.local
+
+# Utility/Test scripts
+healthcheck.js
+listModels.js
+listModelsNative.js
+testFetch.js
 .env.development.local
 .env.test.local
 .env.production.local
@@ -31,6 +37,17 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+eslint_report.txt
+eslint_fresh.json
+eslint_v3.json
+models.txt
+
+# Scripts
+list_models*
+read_models.cjs
+testFetch.js
+healthcheck.js
+listModels*
 
 # Firebase
 .firebase/

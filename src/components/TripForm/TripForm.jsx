@@ -2,7 +2,7 @@
 // Left panel — User preference collection form
 // Clean, beautiful input form with vibe selection
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { MapPin, Clock, Wallet, Sparkles, Heart, AlertCircle, Compass, Coffee, Gem, Zap, DollarSign, CreditCard } from 'lucide-react';
 import { useTripStore } from '../../store/tripStore';
@@ -26,19 +26,26 @@ const BUDGETS = [
 export default function TripForm() {
   const { state, dispatch } = useTripStore();
   const { generate } = useItineraryGenerator();
-  const [localPrefs, setLocalPrefs] = useState(state.preferences);
+  const [localPrefs, setLocalPrefs] = useState(() => state.preferences);
+
+  // Sync state if it changes from outside (e.g. voice assistant)
+  useEffect(() => {
+    setLocalPrefs(state.preferences);
+  }, [state.preferences]);
 
   const update = (key, value) => setLocalPrefs(p => ({ ...p, [key]: value }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // E-1: Basic input sanitization (prevent prompt injection via max lengths & character stripping)
+    // S-8: Strict allowlist sanitization (permit only safe characters)
+    const sanitize = (val) => (val || '').replace(/[^a-zA-Z0-9\s,.'!?-]/g, '').substring(0, 300);
+
     const sanitizedPrefs = {
       ...localPrefs,
-      destination: localPrefs.destination.substring(0, 100).replace(/[<>{}[\]\\]/g, ''),
-      interests: localPrefs.interests.substring(0, 300).replace(/[<>{}[\]\\]/g, ''),
-      constraints: localPrefs.constraints.substring(0, 300).replace(/[<>{}[\]\\]/g, ''),
+      destination: sanitize(localPrefs.destination).substring(0, 100),
+      interests: sanitize(localPrefs.interests),
+      constraints: sanitize(localPrefs.constraints),
     };
 
     dispatch({ type: ACTIONS.SET_PREFERENCES, payload: sanitizedPrefs });
@@ -49,6 +56,7 @@ export default function TripForm() {
 
   return (
     <motion.aside
+      aria-label="Trip Planning Form"
       className={styles.panel}
       initial={{ x: -40, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
@@ -118,7 +126,8 @@ export default function TripForm() {
             <Wallet size={11} style={{ display: 'inline', marginRight: 4 }} />
             Budget Level
           </legend>
-          <div className={styles.budgetGrid}>
+          <div className={styles.budgetGrid} role="group" aria-labelledby="budget-label">
+            <span id="budget-label" className="sr-only">Select your budget level</span>
             {BUDGETS.map(b => (
               <button
                 key={b.id}
@@ -143,7 +152,8 @@ export default function TripForm() {
             <Heart size={11} style={{ display: 'inline', marginRight: 4 }} />
             Travel Vibe
           </legend>
-          <div className={styles.vibeGrid}>
+          <div className={styles.vibeGrid} role="group" aria-labelledby="vibe-label">
+            <span id="vibe-label" className="sr-only">Select your travel vibe</span>
             {VIBES.map(v => (
               <button
                 key={v.id}
@@ -195,7 +205,7 @@ export default function TripForm() {
         <motion.button
           type="submit"
           className={`btn-primary ${styles.submitBtn}`}
-          disabled={isLoading || !localPrefs.destination || !localPrefs.vibe}
+          disabled={isLoading || !localPrefs.destination}
           whileTap={{ scale: 0.97 }}
         >
           {isLoading ? (
@@ -211,9 +221,7 @@ export default function TripForm() {
           )}
         </motion.button>
 
-        {!localPrefs.vibe && localPrefs.destination && (
-          <p className={styles.hint}>Select a travel vibe to continue</p>
-        )}
+
       </form>
 
       {/* Footer */}

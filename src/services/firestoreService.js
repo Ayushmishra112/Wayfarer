@@ -2,14 +2,11 @@
 // Abstraction layer for Firestore operations
 // Handles saving and loading itineraries
 
-import { db } from '../config/firebase';
+import { db, auth } from '../config/firebase';
+import { signInAnonymously } from 'firebase/auth';
 import {
   collection,
   addDoc,
-  getDocs,
-  query,
-  orderBy,
-  limit,
   serverTimestamp,
 } from 'firebase/firestore';
 
@@ -21,10 +18,12 @@ const COLLECTION = 'itineraries';
  */
 export async function saveItinerary(itinerary, preferences) {
   try {
-    // SECURITY NOTE (S-5): Currently, this writes anonymously. 
-    // Ensure Firestore Rules restrict writes (e.g. `allow write: if request.auth != null;`)
-    // or deploy Firebase Auth before going to production.
+    // S-2: Authenticate anonymously before writing
+    const userCredential = await signInAnonymously(auth);
+    const userId = userCredential.user.uid;
+
     const docRef = await addDoc(collection(db, COLLECTION), {
+      userId,
       itinerary,
       preferences,
       createdAt: serverTimestamp(),
@@ -32,8 +31,7 @@ export async function saveItinerary(itinerary, preferences) {
     return docRef.id;
   } catch (error) {
     console.error('Firestore save error:', error);
-    // Non-fatal — app works without saving
-    return null;
+    // Rethrow to let caller handle alerts/UX
+    throw error;
   }
 }
-

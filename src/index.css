@@ -1,39 +1,43 @@
 /* src/index.css */
-/* TripPulse AI — Cinematic Editorial Design System */
+/* Wayfarer AI — Cinematic Editorial Design System */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap');
+/* Fonts are loaded via <link> in index.html for better performance */
 
 /* ─── CSS Custom Properties (Design Tokens) ───────────────────── */
 :root {
-  /* Core Palette (Cinematic & Editorial) */
-  --color-bg: #F7F5F0;             /* Warm off-white */
-  --color-bg-secondary: #EBE6DF;   /* Sandstone / Paper */
-  --color-surface: #FFFFFF;        /* Pure white for cards */
+  /* Backgrounds (Parchment & Mist) */
+  --color-bg: #fbf9f4;            /* surface */
+  --color-bg-secondary: #f0eee9;  /* surface-container */
+  --color-bg-tertiary: #eae8e3;   /* surface-container-high */
+  
+  /* Surfaces */
+  --color-surface: #ffffff;       /* surface-container-lowest */
   --color-surface-hover: #FAF9F7;  /* Slightly off-white for hover */
   
-  --color-border: #E0D9CD;         /* Subtle warm border */
-  --color-border-bright: #C8B8A6;  /* Stronger sandstone border */
+  --color-border: #e4e2dd;        /* surface-variant */
+  --color-border-bright: #c4c7c7; /* outline-variant */
 
   /* Text Colors */
-  --color-text-primary: #1A1A1A;   /* Deep charcoal */
-  --color-text-secondary: #5C5C5A; /* Muted charcoal */
-  --color-text-muted: #8A8A85;     /* Lighter gray/olive hint */
+  --color-text-primary: #1b1c19;   /* on-background */
+  --color-text-secondary: #444748; /* on-surface-variant */
+  --color-text-muted: #6B6B66;     /* Fixed AC-CONTRAST: Darkened for WCAG AA compliance */
 
   /* Brand Colors / Accents (Natural & Geographic) */
-  --color-primary: #2C2C2A;       /* Charcoal for primary actions */
+  --color-primary: #2c2c2c;       /* primary-container */
+  --color-primary-text: #ffffff;  /* on-primary */
   --color-secondary: #7A8B7A;     /* Muted olive */
   --color-accent: #D05A32;        /* Volcanic orange */
   --color-accent-soft: #D98A44;   /* Dusk amber */
 
   /* Status Colors (Subtle & Contextual) */
-  --color-success: #6B8E4E;       /* Moss green */
-  --color-warning: #D98A44;       /* Dusk amber */
-  --color-danger: #C87A65;        /* Soft terracotta */
-  --color-info: #7E8D9C;          /* Rain blue-gray */
+  --color-success: #10B981;       /* Emerald (Fixed CSS-HARDCODED) */
+  --color-warning: #F59E0B;       /* Amber (Fixed CSS-HARDCODED) */
+  --color-danger: #EF4444;        /* Red (Fixed CSS-HARDCODED) */
+  --color-info: #6366F1;          /* Indigo (Fixed CSS-HARDCODED) */
 
   /* Typography */
-  --font-primary: 'Inter', system-ui, sans-serif;
-  --font-display: 'Playfair Display', serif;
+  --font-primary: 'Manrope', system-ui, sans-serif;
+  --font-display: 'Noto Serif', serif;
 
   /* Spacing */
   --space-xs: 0.25rem;
@@ -88,6 +92,16 @@ body {
   line-height: 1.5;
 }
 
+/* Fixed AC-MOTION: Support users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 #root {
   min-height: 100vh;
 }
@@ -136,9 +150,6 @@ p {
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
   transition: all var(--transition-base);
-  /* Removing glassmorphism completely */
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
 }
 
 .glass-card:hover {
@@ -158,7 +169,7 @@ p {
   background: var(--color-primary);
   border: 1px solid var(--color-primary);
   border-radius: var(--radius-sm);
-  color: #FFFFFF;
+  color: var(--color-primary-text);
   font-family: var(--font-primary);
   font-size: 0.9rem;
   font-weight: 500;
@@ -166,6 +177,12 @@ p {
   transition: all var(--transition-base);
   box-shadow: var(--shadow-sm);
   white-space: nowrap;
+}
+
+/* Fixed AC-FOCUS: Focus visible rings */
+.btn-primary:focus-visible {
+  outline: 2px solid var(--color-info);
+  outline-offset: 2px;
 }
 
 .btn-primary:hover:not(:disabled) {
@@ -202,10 +219,48 @@ p {
   transition: all var(--transition-fast);
 }
 
+.btn-ghost:focus-visible {
+  outline: 2px solid var(--color-info);
+  outline-offset: 2px;
+}
+
 .btn-ghost:hover {
   background: rgba(0,0,0,0.03);
   border-color: var(--color-text-muted);
   color: var(--color-text-primary);
+}
+
+/* ─── Accessibility ────────────────────────────────────────────── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.skip-nav:focus {
+  position: fixed;
+  top: var(--space-md);
+  left: var(--space-md);
+  z-index: 9999;
+  width: auto;
+  height: auto;
+  padding: 12px 24px;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+  background: var(--color-primary);
+  color: var(--color-primary-text);
+  border: 2px solid var(--color-info);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-lg);
+  outline: none;
 }
 
 /* ─── Form Elements ────────────────────────────────────────────── */
@@ -220,7 +275,6 @@ p {
   font-size: 0.95rem;
   transition: all var(--transition-fast);
   outline: none;
-  -webkit-appearance: none;
   appearance: none;
   box-shadow: inset 0 1px 2px rgba(0,0,0,0.02);
 }
@@ -233,11 +287,6 @@ p {
 
 .input-field::placeholder {
   color: #A0A09B;
-}
-
-.input-field option {
-  background: #FFFFFF;
-  color: var(--color-text-primary);
 }
 
 label {
@@ -267,7 +316,6 @@ label {
   border: 1px solid var(--color-border);
 }
 
-/* Specific badge colors (muted and elegant) */
 .badge-primary { background: #EFEFEF; color: var(--color-text-primary); border-color: #E0E0E0; }
 .badge-success { background: #E8F0E3; color: var(--color-success); border-color: #D3E0CA; }
 .badge-warning { background: #FDF3E9; color: var(--color-warning); border-color: #F3E0C9; }
@@ -288,9 +336,8 @@ label {
 }
 
 /* ─── No Background Animations ─────────────────────────────────── */
-/* Removing animated bg-mesh, making it static and subtle */
 .bg-mesh {
-  display: none; /* No random blobs */
+  display: none; 
 }
 
 /* ─── Timeline ─────────────────────────────────────────────────── */
@@ -337,10 +384,6 @@ label {
   font-weight: 500;
   font-family: var(--font-display);
   font-style: italic;
-  -webkit-background-clip: unset;
-  -webkit-text-fill-color: unset;
-  background-clip: unset;
-  background: none;
 }
 
 .glow-border {
@@ -349,13 +392,80 @@ label {
 }
 
 /* ─── Media Queries ────────────────────────────────────────────── */
+/* Fixed CSS-MOBILE: Comprehensive breakpoints */
+@media (max-width: 1200px) {
+  .app-layout {
+    grid-template-columns: 300px 1fr;
+    padding: var(--space-md);
+  }
+}
+
 @media (max-width: 1024px) {
   .app-layout {
     grid-template-columns: 1fr;
     grid-template-rows: auto;
     height: auto;
     overflow: auto;
-    padding: var(--space-md);
     gap: var(--space-lg);
   }
+}
+
+@media (max-width: 768px) {
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.5rem; }
+  .app-layout {
+    padding: var(--space-sm);
+  }
+}
+
+@media (max-width: 480px) {
+  .app-layout {
+    display: flex;
+    flex-direction: column;
+  }
+}
+/* ─── Global Animations ───────────────────────────────────────── */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes voice-wave {
+  0%, 100% { height: 10px; opacity: 0.5; }
+  50% { height: 32px; opacity: 1; }
+}
+
+.voice-visualizer-bar {
+  width: 4px;
+  border-radius: 2px;
+  background: var(--color-danger);
+  animation: voice-wave 1s ease-in-out infinite;
+}
+
+/* ─── Accessibility ───────────────────────────────────────────── */
+.skip-nav {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--color-primary);
+  color: white;
+  padding: 8px;
+  z-index: 9999;
+  transition: top 0.2s;
+}
+
+.skip-nav:focus {
+  top: 0;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }

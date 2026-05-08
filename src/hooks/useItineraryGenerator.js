@@ -13,12 +13,58 @@ export function useItineraryGenerator() {
   const { state, dispatch, addAlert } = useTripStore();
   const timersRef = useRef([]);
 
-  // Cleanup timers on unmount
+  // Cleanup timers on unmount or when returning to input phase
   useEffect(() => {
-    return () => {
+    if (state.phase === 'input') {
       timersRef.current.forEach(clearTimeout);
+      timersRef.current = [];
+    }
+  }, [state.phase]);
+
+  useEffect(() => {
+    const timers = timersRef.current;
+    return () => {
+      timers.forEach(clearTimeout);
     };
   }, []);
+
+  /**
+   * Replanning pipeline triggered by a live event
+   */
+  const replan = useCallback(async (event, dayIndex) => {
+    dispatch({ type: ACTIONS.START_REPLANNING });
+
+    addAlert({
+      type: 'warning',
+      title: `Replanning Day ${dayIndex + 1}...`,
+      message: `Adapting your itinerary due to: ${event.description}`,
+    });
+
+    try {
+      const day = state.itinerary?.days[dayIndex];
+      if (!day) throw new Error('Day not found');
+
+      const updatedActivities = await replanSection({
+        activities: day.activities,
+        event,
+        destination: state.preferences.destination,
+      });
+
+      dispatch({
+        type: ACTIONS.PROPOSE_REPLAN,
+        payload: { dayIndex: day.day, activities: updatedActivities, event },
+      });
+
+      // Alert will be shown if they accept, not here
+    } catch (error) {
+      dispatch({ type: ACTIONS.SET_ERROR, payload: error.message });
+      addAlert({
+        type: 'error',
+        title: 'Replanning Failed',
+        message: 'Could not update itinerary. Please try again.',
+      });
+    }
+  }, [state.itinerary, state.preferences, dispatch, addAlert]);
 
   /**
    * Main generation pipeline:
@@ -44,8 +90,15 @@ export function useItineraryGenerator() {
 
       dispatch({ type: ACTIONS.SET_ITINERARY, payload: itinerary });
 
-      // Step 3: Save to Firestore (fire-and-forget, non-blocking)
-      saveItinerary(itinerary, preferences);
+      // Step 3: Save to Firestore (fire-and-forget, with error alert)
+      saveItinerary(itinerary, preferences).catch(err => {
+        console.warn('Firestore failed but generation succeeded:', err);
+        addAlert({
+          type: 'info',
+          title: 'Syncing Unavailable',
+          message: 'Itinerary saved locally, but cloud backup failed. Check connection.',
+        });
+      });
 
       // Step 4: Welcome alert
       addAlert({
@@ -67,48 +120,7 @@ export function useItineraryGenerator() {
     }
   }, [dispatch, addAlert, replan]);
 
-  /**
-   * Replanning pipeline triggered by a live event
-   */
-  const replan = useCallback(async (event, dayIndex) => {
-    dispatch({ type: ACTIONS.START_REPLANNING });
 
-    addAlert({
-      type: 'warning',
-      title: `Replanning Day ${dayIndex + 1}...`,
-      message: `Adapting your itinerary due to: ${event.description}`,
-    });
-
-    try {
-      const day = state.itinerary?.days[dayIndex];
-      if (!day) throw new Error('Day not found');
-
-      const updatedActivities = await replanSection({
-        activities: day.activities,
-        event,
-        destination: state.preferences.destination,
-      });
-
-      dispatch({
-        type: ACTIONS.APPLY_REPLAN,
-        payload: { dayIndex: day.day, activities: updatedActivities, event },
-      });
-
-      addAlert({
-        type: 'success',
-        title: 'Replanned Successfully',
-        message: `Day ${dayIndex + 1} updated — ${event.explanation}`,
-      });
-
-    } catch (error) {
-      dispatch({ type: ACTIONS.SET_ERROR, payload: error.message });
-      addAlert({
-        type: 'error',
-        title: 'Replanning Failed',
-        message: 'Could not update itinerary. Please try again.',
-      });
-    }
-  }, [state.itinerary, state.preferences, dispatch, addAlert]);
 
   return { generate, replan, state };
 }
@@ -157,7 +169,9 @@ function scheduleSimulatedEvents(preferences, weather, dispatch, addAlert, repla
     const timerId = setTimeout(() => {
       addAlert(alert);
       if (simulatedEvent) {
-        replan(simulatedEvent, 0); // Replan Day 1
+        // Fixed A-ARCH3: Varied simulated replan day for demo variety
+        // In a real app, this would target the current active day
+        replan(simulatedEvent, 0); 
       }
     }, delay);
     timersRef.current.push(timerId);

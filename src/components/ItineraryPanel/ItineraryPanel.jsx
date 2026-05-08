@@ -10,7 +10,6 @@ import {
   Utensils, Landmark, Compass, Martini, Coffee, ShoppingBag, Dna
 } from 'lucide-react';
 import { useTripStore } from '../../store/tripStore';
-import { useItineraryGenerator } from '../../hooks/useItineraryGenerator';
 import EmptyState from '../EmptyState/EmptyState';
 import GeneratingState from '../GeneratingState/GeneratingState';
 import VibeScoreRing from '../VibeScoreRing/VibeScoreRing';
@@ -58,7 +57,7 @@ export default function ItineraryPanel() {
   const currentDay = itinerary.days?.[activeDay];
 
   return (
-    <main className={styles.panel}>
+    <main id="main-content" aria-label="Generated Trip Itinerary" className={styles.panel}>
       {/* Trip Header */}
       <motion.div
         className={styles.tripHeader}
@@ -88,7 +87,7 @@ export default function ItineraryPanel() {
           <VibeScoreRing score={itinerary.vibeScore} />
           {itinerary.insiderTip && (
             <div className={styles.insiderTip}>
-              <Lightbulb size={13} style={{ color: '#f59e0b', flexShrink: 0 }} />
+              <Lightbulb size={13} style={{ color: 'var(--color-warning)', flexShrink: 0 }} />
               <span>{itinerary.insiderTip}</span>
             </div>
           )}
@@ -128,7 +127,7 @@ export default function ItineraryPanel() {
           >
             {/* Day Theme Banner */}
             <div className={styles.dayTheme}>
-              <Zap size={14} style={{ color: '#6366f1' }} />
+              <Zap size={14} style={{ color: 'var(--color-info)' }} />
               <span>{currentDay?.theme}</span>
             </div>
 
@@ -227,7 +226,7 @@ export default function ItineraryPanel() {
                             </span>
                             {activity.rating && (
                               <span className={styles.detailItem}>
-                                <Star size={12} style={{ color: '#f59e0b' }} />
+                                <Star size={12} style={{ color: 'var(--color-warning)' }} />
                                 {activity.rating}
                               </span>
                             )}
@@ -236,8 +235,8 @@ export default function ItineraryPanel() {
                           {/* AI Reason */}
                           <div className={styles.aiReason}>
                             <div className={styles.aiReasonHeader}>
-                              <Lightbulb size={13} style={{ color: '#6366f1' }} />
-                              <span>Why TripPulse picked this</span>
+                              <Lightbulb size={13} style={{ color: 'var(--color-info)' }} />
+                              <span>Why Wayfarer picked this</span>
                             </div>
                             <p>{activity.reason}</p>
                           </div>
@@ -254,7 +253,7 @@ export default function ItineraryPanel() {
                           {/* Alternative */}
                           {activity.alternative && (
                             <div className={styles.alternative}>
-                              <ArrowRight size={12} style={{ color: '#06b6d4', flexShrink: 0 }} />
+                              <ArrowRight size={12} style={{ color: 'var(--color-info)', flexShrink: 0 }} />
                               <div>
                                 <span className={styles.altLabel}>Alternative: </span>
                                 <span className={styles.altName}>{activity.alternative.place}</span>

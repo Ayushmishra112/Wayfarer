@@ -38,7 +38,7 @@ export default function GeneratingState() {
           animate={{ opacity: [0.6, 1, 0.6] }}
           transition={{ repeat: Infinity, duration: 2 }}
         >
-          TripPulse is thinking...
+          Wayfarer is thinking...
         </motion.h2>
         <p className={styles.subtitle}>
           Generating your perfect {state.preferences.duration}-day{' '}

@@ -60,7 +60,7 @@ export async function getCurrentWeather(city) {
 /**
  * Maps WMO weather codes to our condition strings
  */
-function interpretWeatherCode(code) {
+export function interpretWeatherCode(code) {
   if (code === 0) return { condition: 'Clear', description: 'clear sky', isRainy: false };
   if (code <= 3) return { condition: 'Clouds', description: 'cloudy', isRainy: false };
   if (code === 45 || code === 48) return { condition: 'Fog', description: 'foggy', isRainy: false };

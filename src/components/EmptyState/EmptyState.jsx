@@ -43,7 +43,7 @@ export default function EmptyState() {
 
         <p className={styles.subtitle}>
           Enter your destination and preferences on the left.
-          TripPulse AI will generate a hyper-personalized itinerary
+          Wayfarer AI will generate a hyper-personalized itinerary
           that adapts in real time to weather, crowds, and live events.
         </p>
 

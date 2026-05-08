@@ -16,10 +16,13 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-          framer: ['framer-motion'],
-          firebase: ['firebase/app', 'firebase/firestore'],
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom')) return 'vendor';
+            if (id.includes('framer-motion')) return 'framer';
+            if (id.includes('firebase')) return 'firebase';
+            return 'utils';
+          }
         }
       }
     }
